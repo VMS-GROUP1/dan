@@ -8,15 +8,9 @@ namespace acmicpc.net.p001000
     {
         static void Main(string[] args)
         {
-            IEnumerable<int> values = new List<int>();
-
-            while (values.Count() != 2)
-            {
-                values = from item in Console.ReadLine().Split()
-                        where int.TryParse(item, out _)
-                        select int.Parse(item);
-            }
-
+            IEnumerable<int> values = from item in Console.ReadLine().Split()
+                                      select int.Parse(item);
+            
             Console.WriteLine(values.Sum());
         }
     }

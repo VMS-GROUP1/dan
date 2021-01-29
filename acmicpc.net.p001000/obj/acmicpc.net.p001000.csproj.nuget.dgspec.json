@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\danho\\github\\algorithmstudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj": {}
+    "E:\\Danho\\GitHub\\AlgorithmStudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj": {}
   },
   "projects": {
-    "E:\\danho\\github\\algorithmstudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj": {
+    "E:\\Danho\\GitHub\\AlgorithmStudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\danho\\github\\algorithmstudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj",
+        "projectUniqueName": "E:\\Danho\\GitHub\\AlgorithmStudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj",
         "projectName": "acmicpc.net.p001000",
-        "projectPath": "E:\\danho\\github\\algorithmstudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj",
+        "projectPath": "E:\\Danho\\GitHub\\AlgorithmStudy\\acmicpc.net.p001000\\acmicpc.net.p001000.csproj",
         "packagesPath": "C:\\Users\\sorce\\.nuget\\packages\\",
-        "outputPath": "E:\\danho\\github\\algorithmstudy\\acmicpc.net.p001000\\obj\\",
+        "outputPath": "E:\\Danho\\GitHub\\AlgorithmStudy\\acmicpc.net.p001000\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sorce\\AppData\\Roaming\\NuGet\\NuGet.Config",
