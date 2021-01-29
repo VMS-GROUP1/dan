@@ -8,17 +8,8 @@ namespace acmicpc.net.p002558
     {
         static void Main(string[] args)
         {
-            IEnumerable<int> values = new List<int>();
-
-            while (values.Count() != 2)
-            {
-                var line1 = Console.ReadLine().Split().FirstOrDefault();
-                var line2 = Console.ReadLine().Split().FirstOrDefault();
-
-                values = from item in new string[] { line1, line2 }
-                         where int.TryParse(item, out _)
-                         select int.Parse(item);
-            }
+            IEnumerable<int> values = from item in Console.ReadLine().Split().Concat(Console.ReadLine().Split())
+                                      select int.Parse(item);
 
             Console.WriteLine(values.Sum());
         }
