@@ -18,25 +18,26 @@ namespace acmicpc.net.p010992
         static void Main(string[] args)
         {
             int input = int.Parse(Console.ReadLine());
+            char whiteSpace = ' ';
+            char asterisk = '*';
             StringBuilder sb = new StringBuilder();
 
             for (int i = 1; i < input; i++)
             {
                 int numOfSpace = Math.Abs(input - i);
                 int numOfChar = i * 2 - 1;
-                AppendMore(' ', numOfSpace, ref sb);
+                AppendMore(whiteSpace, numOfSpace, ref sb);
 
                 for (int j = 1; j <= numOfChar; j++)
                 {
-                    sb.Append(j > 1 && j < numOfChar ? ' ' : '*');
+                    sb.Append(j > 1 && j < numOfChar ? whiteSpace : asterisk);
                 }
 
-                Console.WriteLine(sb.ToString());
-                sb.Clear();
+                sb.AppendLine();
             }
 
-            AppendMore('*', input * 2 - 1, ref sb);
-            Console.WriteLine(sb.ToString());
+            AppendMore(asterisk, input * 2 - 1, ref sb);
+            Console.Write(sb.ToString());
         }
 
         static void AppendMore(char c, int count, ref StringBuilder sb)
