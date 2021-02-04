@@ -46,7 +46,7 @@ namespace acmicpc.net
                     Console.WriteLine($"Run '{method.DeclaringType.FullName}'");
                     WriteRecentLog(recentLogPath, className);
                     method.Invoke(null, new string[1]);
-                    break;
+                    //break;
                 }
                 catch (Exception e)
                 {
@@ -62,7 +62,7 @@ namespace acmicpc.net
             {
                 Type type = assembly.GetType(name);
                 if (type is null)
-                    throw new Exception("Not found problem.");
+                    throw new Exception("Not found class.");
 
                 var method = type.GetMethod(MethodName, BindingFlags.Public | BindingFlags.Static);
                 return method;
