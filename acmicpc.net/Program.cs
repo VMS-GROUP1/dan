@@ -9,7 +9,7 @@ namespace acmicpc.net
     class Program
     {
         const string MethodName = "Main";
-        const string FolderName = "Problems";
+        const string FolderName = "Problems.DP";
         const string StopCommand = "stop";
         const string RecentLogName = "recent.log";
 
