@@ -38,18 +38,8 @@ namespace acmicpc.net.Problems.DP
         {
             int x = int.Parse(Console.ReadLine());
 
-            Stopwatch timer = new Stopwatch();
-
-            //시간 초과?
-            timer.Start();
             Solve2(x);
-            timer.Stop();
-            System.Console.WriteLine(timer.Elapsed.TotalSeconds);
-
-            timer.Restart();
-            Solve1(x);
-            timer.Stop();
-            System.Console.WriteLine(timer.Elapsed.TotalSeconds);
+            // Solve1(x);
         }
 
         private static void Solve1(int x)
@@ -71,61 +61,50 @@ namespace acmicpc.net.Problems.DP
                 if (i % 3 == 0)
                 {
                     int j = i / 3;
-                    //memo[i] = Math.Min(memo[i], memo[j] + 1);
-                    memo[i] = memo[i] > memo[j] + 1 ? memo[j] + 1 : memo[i];
+                    memo[i] = Math.Min(memo[i], memo[j] + 1);
                 }
 
                 if (i % 2 == 0)
                 {
                     int j = i / 2;
-                    //memo[i] = Math.Min(memo[i], memo[j] + 1);
-                    memo[i] = memo[i] > memo[j] + 1 ? memo[j] + 1 : memo[i];
+                    memo[i] = Math.Min(memo[i], memo[j] + 1);
                 }
             }
 
-            Console.WriteLine($"Solve1: {memo[x]}");
+            Console.WriteLine(memo[x]);
         }
 
         private static void Solve2(int x)
         {
-            int min = 1_000_000_000;
-            Calc1(x, 0, ref min);
-            System.Console.WriteLine($"Solve2: {min}");
+            int[] memo = new int[1_000_001];
+            Calc3(x, memo);
+            System.Console.WriteLine(memo[x]);
         }
 
-        private static void Calc1(int x, int count, ref int min)
+        private static void Calc3(int x, int[] memo)
         {
+            if (x == 1)
+                return;
+
+            if (memo[x] > 0)
+                return;
+
+            Calc3(x - 1, memo);
+            memo[x] = memo[x - 1] + 1;
+
             if (x % 3 == 0)
             {
-                Calc2(x / 3, count + 1, ref min);
-                if (count + 1 >= min)
-                    return;
+                int y = x / 3;
+                Calc3(y, memo);
+                memo[x] = Math.Min(memo[x], memo[y] + 1);
             }
 
             if (x % 2 == 0)
             {
-                Calc2(x / 2, count + 1, ref min);
-                if (count + 1 >= min)
-                    return;
+                int y = x / 2;
+                Calc3(y, memo);
+                memo[x] = Math.Min(memo[x], memo[y] + 1);
             }
-
-            Calc2(x - 1, count + 1, ref min);
-            if (count + 1 >= min)
-                return;
-        }
-
-        private static void Calc2(int x, int count, ref int min)
-        {
-            if (x == 1)
-            {
-                min = Math.Min(min, count);
-                return;
-            }
-
-            if (count + 1 >= min)
-                return;
-
-            Calc1(x, count, ref min);
         }
     }
 }
