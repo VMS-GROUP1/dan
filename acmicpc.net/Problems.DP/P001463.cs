@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace acmicpc.net.Problems.DP
 {
@@ -38,8 +39,8 @@ namespace acmicpc.net.Problems.DP
         {
             int x = int.Parse(Console.ReadLine());
 
+            //Solve1(x);
             Solve2(x);
-            // Solve1(x);
         }
 
         private static void Solve1(int x)
@@ -77,32 +78,35 @@ namespace acmicpc.net.Problems.DP
         private static void Solve2(int x)
         {
             int[] memo = new int[1_000_001];
-            Calc3(x, memo);
+            for (int i = 1; i <= Math.Ceiling((double)x / 1_000); i++)
+            {
+                Do(Math.Min(x, i * 1000), memo);
+            }
             System.Console.WriteLine(memo[x]);
         }
 
-        private static void Calc3(int x, int[] memo)
+        private static void Do(int x, int[] memo)
         {
-            if (x == 1)
+            if (x <= 1)
                 return;
 
             if (memo[x] > 0)
                 return;
 
-            Calc3(x - 1, memo);
+            Do(x - 1, memo);
             memo[x] = memo[x - 1] + 1;
 
             if (x % 3 == 0)
             {
                 int y = x / 3;
-                Calc3(y, memo);
+                Do(y, memo);
                 memo[x] = Math.Min(memo[x], memo[y] + 1);
             }
 
             if (x % 2 == 0)
             {
                 int y = x / 2;
-                Calc3(y, memo);
+                Do(y, memo);
                 memo[x] = Math.Min(memo[x], memo[y] + 1);
             }
         }
