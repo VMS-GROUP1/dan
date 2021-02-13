@@ -16,7 +16,7 @@ namespace acmicpc.net.Problems.DP
                 int numOfColumns = int.Parse(Console.ReadLine());
                 var firstRow = Console.ReadLine().Split();
                 var secondRow = Console.ReadLine().Split();
-                int[,] point = new int[numOfColumns + 1, NumOfRows];
+                int[,] point = new int[numOfColumns + 1, NumOfRows];    
                 for (int column = 1; column <= numOfColumns; column++)
                 {
                     point[column, 0] = int.Parse(firstRow[column - 1]);
