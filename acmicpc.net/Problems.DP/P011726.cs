@@ -39,7 +39,7 @@ namespace acmicpc.net.Problems.DP
 
         private static void Solve1(int n)
         {
-            Memo.Initialize();
+            Memo = new int[1_001];
             Memo[1] = 1;
             Memo[2] = 2;
 
@@ -53,7 +53,7 @@ namespace acmicpc.net.Problems.DP
 
         private static void Solve2(int n)
         {
-            Memo.Initialize();
+            Memo = new int[1_001];
             Memo[1] = 1;
             Memo[2] = 2;
 
