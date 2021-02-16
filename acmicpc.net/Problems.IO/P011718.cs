@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
 using System.Text.RegularExpressions;
 
-namespace acmicpc.net.p011718
+namespace acmicpc.net.Problems.IO
 {
     /*
     문제
@@ -15,9 +13,9 @@ namespace acmicpc.net.p011718
     출력
     입력받은 그대로 출력한다.
     */
-    class Program
+    public class P011718
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             //:(
             //string pattern1 = @"[a-zA-Z0-9]";

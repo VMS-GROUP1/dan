@@ -1,8 +1,7 @@
-﻿using System;
-using System.Text;
+using System;
 using System.Text.RegularExpressions;
 
-namespace acmicpc.net.p011721
+namespace acmicpc.net.Problems.IO
 {
     /*
     문제
@@ -16,9 +15,9 @@ namespace acmicpc.net.p011721
     출력
     입력으로 주어진 단어를 열 개씩 끊어서 한 줄에 하나씩 출력한다. 단어의 길이가 10의 배수가 아닌 경우에는 마지막 줄에는 10개 미만의 글자만 출력할 수도 있다.
     */
-    class Program
+    public class P011721
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var line = Console.ReadLine();
             if (string.IsNullOrEmpty(line))

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
 
-namespace acmicpc.net.p011022
+namespace acmicpc.net.Problems.IO
 {
     /*
     문제
@@ -15,7 +15,7 @@ namespace acmicpc.net.p011022
     출력
     각 테스트 케이스마다 "Case #x: A + B = C" 형식으로 출력한다. x는 테스트 케이스 번호이고 1부터 시작하며, C는 A+B이다.
     */
-    class Program
+    public class P011022
     {
         static void Main(string[] args)
         {

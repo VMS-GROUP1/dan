@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace acmicpc.net.p011719
+namespace acmicpc.net.Problems.IO
 {
     /*
     문제
@@ -12,9 +12,9 @@ namespace acmicpc.net.p011719
     출력
     입력받은 그대로 출력한다.
     */
-    class Program
+    public class P011719
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             for (int i = 0; i < 100; i++)
             {
