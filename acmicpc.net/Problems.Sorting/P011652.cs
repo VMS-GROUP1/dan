@@ -9,11 +9,11 @@ namespace acmicpc.net.Problems.Sorting
         public static void Main(string[] args)
         {
             int n = int.Parse(Console.ReadLine());
-            Dictionary<int, Card> cards = new Dictionary<int, Card>();
+            Dictionary<long, Card> cards = new Dictionary<long, Card>();
 
             for (int i = 0; i < n; i++)
             {
-                int number = int.Parse(Console.ReadLine());
+                long number = long.Parse(Console.ReadLine());
                 if (cards.TryGetValue(number, out Card card) == false)
                 {
                     card = new Card(number);
@@ -30,9 +30,9 @@ namespace acmicpc.net.Problems.Sorting
 
         public class Card : IComparable<Card>
         {
-            public int Number;
+            public long Number;
             public int Count;
-            public Card(int number)
+            public Card(long number)
             {
                 Number = number;
             }
