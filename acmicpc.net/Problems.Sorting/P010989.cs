@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace acmicpc.net.Problems.Sorting
@@ -9,30 +10,34 @@ namespace acmicpc.net.Problems.Sorting
         public static void Main(string[] args)
         {
             int n = int.Parse(Console.ReadLine());
-            List<int> collection = new List<int>();
+            int[] col = new int[10001];
 
             for (int i = 0; i < n; i++)
             {
-                collection.Add(int.Parse(Console.ReadLine()));
+                col[(int.Parse(Console.ReadLine()))] += 1;
             }
 
-            collection.Sort();
+            StreamWriter sw = new StreamWriter(Console.OpenStandardOutput());
+            sw.AutoFlush = true;
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < n; i++)
+
+            for (int i = 0; i < col.Length; i++)
             {
-                if (i != 0 && i % 4_000 == 0)
+                for (int j = 0; j < col[i]; j++)
                 {
-                    Console.WriteLine(sb.ToString());
-                    sb.Clear();
+                    if (sb.Length >= 20_000)
+                    {
+                        sw.Write(sb);
+                        sb.Clear();
+                    }
+
+                    sb.Append(i);
+                    sb.Append('\n');
                 }
 
-                if (i != 0)
-                    sb.AppendLine();
-
-                sb.Append(collection[i]);
             }
 
-            Console.WriteLine(sb.ToString());
+            sw.Write(sb);
         }
     }
 }
