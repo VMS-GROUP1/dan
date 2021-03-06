@@ -9,7 +9,7 @@ namespace acmicpc.net
     class Program
     {
         const string MethodName = "Main";
-        const string FolderName = "Problems.LinkedLists";
+        const string FolderName = "Problems.Strings";
         const string StopCommand = "stop";
         const string RecentLogName = "recent.log";
 
@@ -60,9 +60,17 @@ namespace acmicpc.net
         {
             try
             {
-                Type type = assembly.GetType(name);
+                string[] block = name?.Split('.');
+                if (block == null || block.Length <= 0)
+                {
+                    throw new Exception("Invalid namespace.");
+                }
+
+                Type type = assembly.GetType(name) ?? assembly.GetTypes().First(x => x.Name.EndsWith(block[block.Length - 1]));
                 if (type is null)
+                {
                     throw new Exception("Not found class.");
+                }
 
                 var method = type.GetMethod(MethodName, BindingFlags.Public | BindingFlags.Static);
                 return method;
