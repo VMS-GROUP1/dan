@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace acmicpc.net.Problems
+namespace acmicpc.net.Problems.IO
 {
     /*
     문제

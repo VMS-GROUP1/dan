@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace acmicpc.net.Problems
+namespace acmicpc.net.Problems.IO
 {
     class P001000
     {

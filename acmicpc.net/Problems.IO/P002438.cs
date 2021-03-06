@@ -1,6 +1,6 @@
 using System;
 
-namespace acmicpc.net.Problems
+namespace acmicpc.net.Problems.IO
 {
     class P002438
     {

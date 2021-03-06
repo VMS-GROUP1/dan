@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace acmicpc.net.Problems
+namespace acmicpc.net.Problems.IO
 {
     /*
     문제
