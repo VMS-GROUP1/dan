@@ -16,13 +16,13 @@ namespace acmicpc.net.Problems.Mathematics
             List<int> p = new List<int>();
             bool[] np = new bool[x + 1];
 
-            for (int i = 2; i <= x; i++)
+            for (long i = 2; i <= x; i++)
             {
                 if (np[i])
                     continue;
 
-                p.Add(i);
-                for (int j = i * i; j <= x; j += i)
+                p.Add((int)i);
+                for (long j = i * i; j <= x; j += i)
                 {
                     np[j] = true;
                 }
