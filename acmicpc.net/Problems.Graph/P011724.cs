@@ -167,6 +167,46 @@ namespace acmicpc.net.Problems.Graph
 
             private class WaitingStack<TNode> : Stack<TNode>, iWaiting<TNode>
             {
+                HashSet<TNode> Items = new HashSet<TNode>();
+                public new TNode Pop()
+                {
+                    var x = base.Pop();
+
+                    while (Items.Add(x) is false)
+                    {
+                        if (base.TryPop(out x) is false)
+                            break;
+                    }
+
+                    return x;
+                }
+
+                public new TNode Peek()
+                {
+                    var x = base.Peek();
+
+                    while (Items.Contains(x))
+                    {
+                        if (base.TryPop(out x) is false)
+                            break;
+                    }
+
+                    return x;
+                }
+
+                public new bool TryPop(out TNode value)
+                {
+                    if (base.TryPop(out value) is false)
+                        return false;
+
+                    while (Items.Add(value) is false)
+                    {
+                        if (base.TryPop(out value) is false)
+                            return false;
+                    }
+
+                    return true;
+                }
             }
 
             private interface iWaiting<TNode>
