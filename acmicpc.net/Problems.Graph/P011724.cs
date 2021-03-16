@@ -44,7 +44,6 @@ namespace acmicpc.net.Problems.Graph
 
             Console.WriteLine(count);
         }
-
         public class Graph<T> where T : IComparable
         {
             private Node Start;
@@ -168,12 +167,6 @@ namespace acmicpc.net.Problems.Graph
 
             private class WaitingStack<TNode> : Stack<TNode>, iWaiting<TNode>
             {
-                HashSet<TNode> Items = new HashSet<TNode>();
-                public new void Push(TNode x)
-                {
-                    if (Items.Add(x))
-                        base.Push(x);
-                }
             }
 
             private interface iWaiting<TNode>
