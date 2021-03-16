@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace acmicpc.net.Problems.Graph
@@ -33,17 +34,28 @@ namespace acmicpc.net.Problems.Graph
                     continue;
 
                 count++;
-                var cc = graph.SearchBFS(i);
-                foreach (var j in cc)
-                    check[j] = true;
+
+                graph.ResetMove(i, Graph<int>.GraphSearch.BFS);
+                while (graph.MoveNext())
+                {
+                    check[graph.Value] = true;
+                }
             }
 
             Console.WriteLine(count);
         }
 
-        public class Graph<T>
+        public class Graph<T> where T : IComparable
         {
-            Dictionary<T, Node> Vertexes = new Dictionary<T, Node>();
+            private Node Start;
+            private GraphSearch Search;
+            private Node Current;
+            private Dictionary<T, Node> Vertexes = new Dictionary<T, Node>();
+            private HashSet<Node> Visited = new HashSet<Node>();
+            private iWaiting<Node> WaitingNodes;
+            private Func<T, T, int> Comparison;
+
+            public T Value => Current == null ? default(T) : Current.NodeID;
 
             public bool Add(T index)
             {
@@ -61,79 +73,59 @@ namespace acmicpc.net.Problems.Graph
                 Vertexes[x].Link(Vertexes[y]);
             }
 
+            public bool MoveNext()
+            {
+                if (Start != null)
+                {
+                    Current = Start;
+                    Visited.Add(Current);
+                    Start = null;
+                    return true;
+                }
+
+                var neighbors = Current.GetNeighbors().Where(x => Visited.Contains(x) is false).ToList();
+                if (Comparison != null)
+                    neighbors.Sort((x, y) => Comparison(x.NodeID, y.NodeID) * (int)Search);
+
+                neighbors.ForEach(x => WaitingNodes.Push(x));
+                WaitingNodes.TryPop(out Current);
+
+                return Current != null && Visited.Add(Current);
+            }
+
+
             public void UnLink(T x, T y)
             {
                 Vertexes[x].Remove(Vertexes[y]);
             }
 
-            public IEnumerable<T> SearchDFS(T id)
+            public IEnumerable<T> GetLinks(T id)
             {
-                Node start = Vertexes[id];
-                Stack<Node> n = new Stack<Node>();
-                Dictionary<Node, Queue<Node>> linked = new Dictionary<Node, Queue<Node>>();
-                HashSet<Node> check = new HashSet<Node>();
-                List<T> result = new List<T>();
-
-                Node current = start;
-                while (true)
-                {
-                    if (current == null)
-                    {
-                        n.Pop();
-                        if (n.Count <= 0)
-                            break;
-
-                        current = n.Peek();
-                    }
-
-                    if (check.Add(current))
-                    {
-                        n.Push(current);
-                        result.Add(current.NodeID);
-                        linked[current] = new Queue<Node>(current.GetNodes());
-                    }
-
-                    if (linked[current].Count <= 0)
-                    {
-                        current = null;
-                        continue;
-                    }
-
-                    var m = linked[current].Dequeue();
-                    if (check.Contains(m) == false)
-                        current = m;
-                }
-
-                return result;
+                return Vertexes[id].GetNeighbors().Select(x => x.NodeID);
             }
 
-            public IEnumerable<T> SearchBFS(T id)
+            public void ResetMove(T id, GraphSearch search, Func<T, T, int> comparison = null)
             {
-                Queue<Node> n = new Queue<Node>();
-                HashSet<Node> check = new HashSet<Node>();
-                List<T> result = new List<T>();
-                Node start = Vertexes[id];
-                Node current = start;
-                while (current != null)
+                Start = Vertexes[id];
+                Current = null;
+                Search = search;
+                Visited.Clear();
+                Comparison = comparison ?? new Func<T, T, int>((x, y) => x.CompareTo(y));
+
+                switch(search)
                 {
-                    if (check.Add(current))
-                        result.Add(current.NodeID);
-
-                    foreach (var m in current.GetNodes())
-                    {
-                        if (check.Add(m))
-                        {
-                            n.Enqueue(m);
-                            result.Add(m.NodeID);
-                        }
-                    }
-
-                    current = n.Count > 0 ? n.Dequeue() : null;
+                    case GraphSearch.BFS:
+                        WaitingNodes = new WaitingQueue<Node>();
+                        break;
+                    case GraphSearch.DFS:
+                        WaitingNodes = new WaitingStack<Node>();
+                        break;
+                    default:
+                        break;
                 }
-
-                return result;
             }
 
+            [DebuggerDisplay("NodeID = {NodeID}")]
             private class Node
             {
                 public T NodeID { get; private set; }
@@ -156,10 +148,47 @@ namespace acmicpc.net.Problems.Graph
                     Linked.Remove(other.NodeID);
                 }
 
-                public IEnumerable<Node> GetNodes()
+                public IEnumerable<Node> GetNeighbors()
                 {
                     return Linked.Values;
                 }
+            }
+
+            private class WaitingQueue<TNode> : Queue<TNode>, iWaiting<TNode>
+            {
+                HashSet<TNode> Items = new HashSet<TNode>();
+                public void Push(TNode x)
+                {
+                    if (Items.Add(x))
+                        base.Enqueue(x);
+                }
+                public TNode Pop() => base.Dequeue();
+                public bool TryPop(out TNode value) => base.TryDequeue(out value);
+            }
+
+            private class WaitingStack<TNode> : Stack<TNode>, iWaiting<TNode>
+            {
+                HashSet<TNode> Items = new HashSet<TNode>();
+                public new void Push(TNode x)
+                {
+                    if (Items.Add(x))
+                        base.Push(x);
+                }
+            }
+
+            private interface iWaiting<TNode>
+            {
+                void Push(TNode x);
+                TNode Pop();
+                TNode Peek();
+                bool TryPop(out TNode value);
+                bool TryPeek(out TNode value);
+            }
+
+            public enum GraphSearch
+            {
+                BFS = 1,
+                DFS = -1
             }
         }
     }
