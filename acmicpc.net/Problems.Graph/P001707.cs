@@ -14,63 +14,68 @@ namespace acmicpc.net.Problems.Graph
 
             for (int k = 0; k < numTC; k++)
             {
-                int[] input = Array.ConvertAll<string, int>(Console.ReadLine().Split(), x => int.Parse(x));
+                int[] input = Console.ReadLine().Split().Select(x => int.Parse(x)).ToArray();
                 int n = input[0];
                 int m = input[1];
-                //Graph<int> graph = new Graph<int>();
-
-                for (int i = 1; i <= n; i++)
-                {
-                    graph.Add(i);
-                }
-
-                for (int i = 0; i < m; i++)
-                {
-                    var edge = Array.ConvertAll<string, int>(Console.ReadLine().Split(), x => int.Parse(x));
-                    graph.Link(edge[0], edge[1]);
-                    graph.Link(edge[1], edge[0]);
-                }
-
-                Dictionary<int, int> set = new Dictionary<int, int>();
-                set[1] = 1;
+                List<int>[] nodes = new List<int>[n + 1];
+                int[] group = new int[n + 1];
                 bool check = true;
 
                 for (int i = 1; i <= n; i++)
                 {
-                    graph.ResetMove(i, Graph<int>.GraphSearch.BFS);
-                    while (graph.MoveNext())
-                    {
-                        if (graph.TryGetGuide(graph.Value, out var pre) is false)
-                        {
-                            set[graph.Value] = 1;
-                            continue;
-                        }
+                    nodes[i] = new List<int>();
+                }
 
-                        if (set.TryGetValue(graph.Value, out var now) is false)
-                        {
-                            set[graph.Value] = set[pre] * -1;
-                            continue;
-                        }
+                for (int i = 0; i < m; i++)
+                {
+                    var edge = Console.ReadLine().Split().Select(x => int.Parse(x)).ToArray();
+                    nodes[edge[0]].Add(edge[1]);
+                    nodes[edge[1]].Add(edge[0]);
+                }
 
-                        if (now == set[pre])
-                        {
-                            check = false;
-                            break;
-                        }
-                    }
+                for (int i = 1; i <= n; i++)
+                {
+                    if (group[i] > 0 || Dfs(nodes, i, group))
+                        continue;
+
+                    check = false;
+                    break;
                 }
 
                 Console.WriteLine(check ? "YES" : "NO");
             }
-
         }
 
-        private static void Dfs(List<int>[] nodes, int start, int group)
+        private static bool Dfs(List<int>[] nodes, int start, int[] group)
         {
-            for (int i = 1; i <= nodes.Length; i++)
-            {
+            Stack<int> queue = new Stack<int>();
+            bool check = true;
 
+            int number = 1;
+            queue.Push(start);
+            group[start] = 1;
+
+            while (queue.Count > 0)
+            {
+                int i = queue.Pop();
+                number = group[i];
+
+                foreach (var j in nodes[i])
+                {
+                    if (group[j] == 0)
+                    {
+                        group[j] = 3 - number;
+                        queue.Push(j);
+                    }
+                    else if (group[j] == number)
+                    {
+                        check = false;
+                        break;
+                    }
+                }
             }
+
+            return check;
         }
 
 
