@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace acmicpc.net.Problems.Graph
@@ -20,9 +21,12 @@ namespace acmicpc.net.Problems.Graph
                 graph.Add(i);
             }
 
+            StreamReader sr = new StreamReader(Console.OpenStandardInput());
+
             for (int i = 0; i < m; i++)
             {
-                var edge = Console.ReadLine().Split().Select(x => int.Parse(x)).ToArray();
+                //var edge = Console.ReadLine().Split().Select(x => int.Parse(x)).ToArray();
+                var edge = sr.ReadLine().Split().Select(x => int.Parse(x)).ToArray();
                 graph.Link(edge[0], edge[1]);
                 graph.Link(edge[1], edge[0]);
             }
