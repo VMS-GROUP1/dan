@@ -10,12 +10,10 @@ namespace acmicpc.net.Problems.Graph
         {
             int n = int.Parse(Console.ReadLine());
             int[][] m = new int[n][];
-            int count = 0;
 
             for (int i = 0; i < n; i++)
             {
                 m[i] = Array.ConvertAll(Console.ReadLine().ToArray(), x => x - (int)'0');
-                count += m[i].Sum();
             }
 
             Dictionary<int, List<int>> link = new Dictionary<int, List<int>>();
