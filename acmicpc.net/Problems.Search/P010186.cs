@@ -7,18 +7,34 @@ namespace acmicpc.net.Problems.Search
 {
     public class P010816
     {
+        private static int Convert(int x) => x >= 0 ? x : 10_000_000 - x;
         public static void Main(string[] args)
         {
             int n = int.Parse(Console.ReadLine());
+            int[] count = new int[20_000_001];
             List<int> card = Console.ReadLine().Split().Select(x => int.Parse(x)).ToList();
             int m = int.Parse(Console.ReadLine());
             List<int> find = Console.ReadLine().Split().Select(x => int.Parse(x)).ToList();
 
-            card.Sort();
+            card.ForEach(x => count[Convert(x)]++);
+
             List<int> ans = new List<int>();
-            find.ForEach(x => ans.Add(Search(card, x)));
+            find.ForEach(x => ans.Add(count[Convert(x)]));
             Console.WriteLine(string.Join(' ', ans));
         }
+
+        // public static void Main(string[] args)
+        // {
+        //     int n = int.Parse(Console.ReadLine());
+        //     List<int> card = Console.ReadLine().Split().Select(x => int.Parse(x)).ToList();
+        //     int m = int.Parse(Console.ReadLine());
+        //     List<int> find = Console.ReadLine().Split().Select(x => int.Parse(x)).ToList();
+
+        //     card.Sort();
+        //     List<int> ans = new List<int>();
+        //     find.ForEach(x => ans.Add(Search(card, x)));
+        //     Console.WriteLine(string.Join(' ', ans));
+        // }
 
         // public static void Main(string[] args)
         // {
