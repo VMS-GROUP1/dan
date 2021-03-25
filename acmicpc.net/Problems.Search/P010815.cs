@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace acmicpc.net.Problems.Search
 {
@@ -8,15 +10,21 @@ namespace acmicpc.net.Problems.Search
     {
         public static void Main(string[] args)
         {
-            int n = int.Parse(Console.ReadLine());
-            List<int> card = Console.ReadLine().Split().Select(x => int.Parse(x)).ToList();
-            int m = int.Parse(Console.ReadLine());
-            List<int> find = Console.ReadLine().Split().Select(x => int.Parse(x)).ToList();
+            Console.ReadLine();
+            var card = new HashSet<string>(Console.ReadLine().Split());
+            Console.ReadLine();
 
-            card.Sort();
-            List<int> ans = new List<int>();
-            find.ForEach(x => ans.Add(Search(card, x) ? 1 : 0));
-            Console.WriteLine(string.Join(' ', ans));
+            StringBuilder stringBuilder = new StringBuilder(600_000);
+            foreach (var find in Console.ReadLine().Split())
+            {
+                stringBuilder.Append(card.Contains(find) ? 1 : 0);
+                stringBuilder.Append(' ');
+            }
+
+            using (var sw = new StreamWriter(new BufferedStream(Console.OpenStandardOutput())))
+            {
+                sw.Write(stringBuilder);
+            }
         }
 
         public static bool Search(List<int> card, int want)
