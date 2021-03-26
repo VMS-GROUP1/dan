@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace acmicpc.net.Problems.Search
 {
     public class P011662
     {
-        private static double Tol = 1e-9;
+        private static double Tol = 1e-8;
         public static void Main(string[] args)
         {
             int[] x = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
