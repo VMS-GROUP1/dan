@@ -1,14 +1,10 @@
 using System;
-using System.IO;
-using System.Text;
 
 namespace acmicpc.net.Problems.DD
 {
     public class P001992
     {
         private static int[,] m;
-        private static StringBuilder sb = new StringBuilder(8_000);
-
         public static void Main(string[] args)
         {
             int n = int.Parse(Console.ReadLine());
@@ -23,37 +19,30 @@ namespace acmicpc.net.Problems.DD
                 }
             }
 
-            using (var sw = new StreamWriter(new BufferedStream(Console.OpenStandardOutput())))
-            {
-                Quad(0, 0, n);
-                sw.Write(sb);
-            }
+            Console.WriteLine(Quad(0, 0, n));
         }
 
-        private static void Quad(int r, int c, int n)
+        private static string Quad(int r, int c, int n)
         {
-            int sum = 0;
-            for (int i = r; i < r + n; i++)
+            if (n == 1)
             {
-                for (int j = c; j < c + n; j++)
-                {
-                    sum += m[i, j];
-                }
+                return m[r, c].ToString();
             }
 
-            if (sum == 0 || sum == n * n)
-            {
-                sb.Append(m[r, c]);
-                return;
-            }
-
-            sb.Append('(');
             int half = n / 2;
-            Quad(r, c, half);
-            Quad(r, c + half, half);
-            Quad(r + half, c, half);
-            Quad(r + half, c + half, half);
-            sb.Append(')');
+            string a1 = Quad(r, c, half);
+            string a2 = Quad(r, c + half, half);
+            string a3 = Quad(r + half, c, half);
+            string a4 = Quad(r + half, c + half, half);
+
+            if (int.TryParse(a1, out int b1) && int.TryParse(a2, out int b2) && int.TryParse(a3, out int b3) && int.TryParse(a4, out int b4))
+            {
+                int sum = b1 + b2 + b3 + b4;
+                if (sum == 0 || sum == 4)
+                    return a1;
+            }
+
+            return string.Concat("(", a1, a2, a3, a4, ")");
         }
     }
 }
