@@ -10,32 +10,97 @@ namespace acmicpc.net.Problems.LinkedLists
     {
         public static void Main(string[] args)
         {
-            LinkedList<int> items = new LinkedList<int>();
+            int number = 5000;
+            LinkedList<LinkedList<int>> items = new LinkedList<LinkedList<int>>();
+            //LinkedList<int> items = new LinkedList<int>();
 
             int[] n = Console.ReadLine().Split().Select(x => int.Parse(x)).ToArray();
-            for (int i = 0; i < n[0]; i++)
-                items.Add(i + 1);
 
-            // Stopwatch watch = new Stopwatch();
-            // watch.Start();
+            LinkedList<int> group = new LinkedList<int>();
+            for (int i = 0; i < n[0]; i++)
+            {
+                if (i % number == 0)
+                {
+                    group = new LinkedList<int>();
+                    items.Add(group);
+                    items.SaveCursor();
+                    items.MovePrev();
+                    items.Value?.ResetCursor();
+                    items.LoadCursor();
+                }
+
+                group.Add(i + 1);
+            }
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            int count = n[1];
             List<int> ans = new List<int>();
+            items.MoveStart();
+            int tempCount = count;
+
             while (items.IsEmpty is false)
             {
-                items.MoveNext(n[1]);
-                ans.Add(items.Value);
-                items.Remove();
+                while (tempCount > 0)
+                {
+                    if (tempCount <= items.Value.Count)
+                        break;
+
+                    tempCount -= items.Value.Count;
+                    items.MoveNext();
+                    items.Value.ResetCursor();
+                }
+
+                group = items.Value;
+                group.MoveNext(count % number);
+                ans.Add(group.Value);
+                group.Remove();
+                var tempGroup = group;
+                items.SaveCursor();
+
+                int shiftCount = 0;
+                while (items.MoveNext())
+                {
+                    tempGroup.MoveEnd();
+                    items.Value.MoveStart();
+                    shiftCount++;
+                    for (int i = 0; i < shiftCount; i++)
+                    {
+                        tempGroup.Add(items.Value.Value);
+                        items.Value.Remove();
+                        items.Value.MoveStart();
+                        if (items.Value.IsEmpty)
+                        {
+                            items.Remove();
+                            //items.MoveEnd();
+                            break;
+                        }
+                    }
+                    tempGroup = items.Value;
+                }
+
+                items.LoadCursor();
+                if (items.Value.IsEmpty)
+                {
+                    items.Remove();
+                    items.MoveStart();
+                }
+
+                tempCount = count - (group.Count - count % number);
+
             }
             Console.WriteLine($"<{string.Join(", ", ans)}>");
-            //watch.Stop();
-            //Console.WriteLine(watch.Elapsed.TotalSeconds);
+            // watch.Stop();
+            // Console.WriteLine(watch.Elapsed.TotalSeconds);
         }
 
         public class LinkedList<T>
         {
-            private int Count;
             private Node Start;
             private Node End;
             private Node Cursor;
+            private Node Save;
+            public int Count {get; private set;}
 
             public bool IsEmpty => End is null;
 
@@ -55,6 +120,17 @@ namespace acmicpc.net.Problems.LinkedLists
                 Count++;
             }
 
+            public void SaveCursor()
+            {
+                Save = Cursor;
+            }
+
+            public void LoadCursor()
+            {
+                Cursor = Save;
+                Save = null;
+            }
+
             public void Remove()
             {
                 if (Cursor == null)
@@ -70,6 +146,9 @@ namespace acmicpc.net.Problems.LinkedLists
 
                 Cursor = prev;
                 Count--;
+
+                if (Save == temp)
+                    Save = null;
             }
 
             public bool MoveNext()
