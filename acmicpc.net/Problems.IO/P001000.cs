@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 
 namespace acmicpc.net.Problems.IO
 {
@@ -8,10 +7,11 @@ namespace acmicpc.net.Problems.IO
     {
         public static void Main(string[] args)
         {
-            IEnumerable<int> values = from item in Console.ReadLine().Split()
-                                      select int.Parse(item);
-            
-            Console.WriteLine(values.Sum());
+            var n = Console.ReadLine();
+            using (var sw = new StreamWriter(new BufferedStream(Console.OpenStandardOutput())))
+            {
+                sw.Write(n[0] + n[2] - 2 * '0');
+            }
         }
     }
 }
