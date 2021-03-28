@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace acmicpc.net.Problems.Search
 {
@@ -10,59 +7,57 @@ namespace acmicpc.net.Problems.Search
         private static double Tol = 1e-8;
         public static void Main(string[] args)
         {
-            int[] x = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
-            Coordinate[] coord = new Coordinate[4];
-            for (int i = 0; i < coord.Length; i++)
+            double[] x = Array.ConvertAll(Console.ReadLine().Split(), x => double.Parse(x));
+            double ax = x[0];
+            double ay = x[1];
+            double bx = x[2];
+            double by = x[3];
+            double cx = x[4];
+            double cy = x[5];
+            double dx = x[6];
+            double dy = x[7];
+
+            double left = 0;
+            double right = 1;
+
+            double dx1 = bx - ax;
+            double dy1 = by - ay;
+            double dx2 = dx - cx;
+            double dy2 = dy - cy;
+
+            while (right - left > Tol)
             {
-                coord[i] = new Coordinate(x[i * 2], x[i * 2 + 1]);
-            }
+                double l = left + (right - left) / 3;
+                double u = right - (right - left) / 3;
+                double a1x = ax + dx1 * l;
+                double a1y = ay + dy1 * l;
+                double a2x = cx + dx2 * l;
+                double a2y = cy + dy2 * l;
 
-            (double min, double max) ratio = (0, 1);
+                double b1x = ax + dx1 * u;
+                double b1y = ay + dy1 * u;
+                double b2x = cx + dx2 * u;
+                double b2y = cy + dy2 * u;
 
-            while (ratio.max - ratio.min > Tol)
-            {
-                double l = ratio.min + (ratio.max - ratio.min) / 3;
-                double u = ratio.max - (ratio.max - ratio.min) / 3;
-                var lCoord1 = coord[0].Point(coord[1], l);
-                var lCoord2 = coord[2].Point(coord[3], l);
-                var uCoord1 = coord[0].Point(coord[1], u);
-                var uCoord2 = coord[2].Point(coord[3], u);
-
-                if (lCoord1.Distance(lCoord2) < uCoord1.Distance(uCoord2))
+                double distance1 = Math.Sqrt((a1x - a2x) * (a1x - a2x) + (a1y - a2y) * (a1y - a2y));
+                double distance2 = Math.Sqrt((b1x - b2x) * (b1x - b2x) + (b1y - b2y) * (b1y - b2y));
+                if (distance1 < distance2)
                 {
-                    ratio = (ratio.min, u);
+                    right = u;
                 }
                 else
                 {
-                    ratio = (l, ratio.max);
+                    left = l;
                 }
             }
 
-            double found = (ratio.max + ratio.min) / 2;
+            double found = (right + left) / 2;
+            double r1x = ax + dx1 * found;
+            double r1y = ay + dy1 * found;
+            double r2x = cx + dx2 * found;
+            double r2y = cy + dy2 * found;
 
-            Console.WriteLine(coord[0].Point(coord[1], found).Distance(coord[2].Point(coord[3], found)));
-        }
-
-        private struct Coordinate
-        {
-            internal double X;
-            internal double Y;
-
-            internal Coordinate(double x, double y)
-            {
-                X = x;
-                Y = y;
-            }
-
-            internal double Distance(Coordinate other)
-            {
-                return Math.Sqrt((this.X - other.X) * (this.X - other.X) + (this.Y - other.Y) * (this.Y - other.Y));
-            }
-
-            internal Coordinate Point(Coordinate other, double ratio)
-            {
-                return new Coordinate(this.X + (other.X - this.X) * ratio, this.Y + (other.Y - this.Y) * ratio);
-            }
+            Console.WriteLine(Math.Sqrt((r1x - r2x) * (r1x - r2x) + (r1y - r2y) * (r1y - r2y)));
         }
     }
 }
