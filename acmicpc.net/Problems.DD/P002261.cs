@@ -13,10 +13,9 @@ namespace acmicpc.net.Problems.DD
             int n = int.Parse(Console.ReadLine());
             m = new List<(int x, int y)>();
 
-            StreamReader sr = new StreamReader(Console.OpenStandardInput());
             for (int i = 0; i < n; i++)
             {
-                int[] value = Array.ConvertAll(sr.ReadLine().Split(), x => int.Parse(x));
+                int[] value = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
                 m.Add((value[0], value[1]));
             }
 
