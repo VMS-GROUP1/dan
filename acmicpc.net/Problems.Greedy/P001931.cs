@@ -8,15 +8,15 @@ namespace acmicpc.net.Problems.Greedy
         public static void Main(string[] args)
         {
             int n = int.Parse(Console.ReadLine());
-            (int start, int end)[] m = new (int start, int end)[n];
+            (int end, int start)[] m = new (int end, int start)[n];
 
             while (n-- > 0)
             {
                 int[] time = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
-                m[n] = (time[0], time[1]);
+                m[n] = (time[1], time[0]);
             }
 
-            Array.Sort(m, new TimeComparer());
+            Array.Sort(m);
             int ans = 0;
             int last = 0;
 
@@ -31,18 +31,6 @@ namespace acmicpc.net.Problems.Greedy
             }
 
             Console.WriteLine(ans);
-        }
-
-        private class TimeComparer : Comparer<(int start, int end)>
-        {
-            public override int Compare((int start, int end) x, (int start, int end) y)
-            {
-                int cmp = x.end.CompareTo(y.end);
-                if (cmp != 0)
-                    return cmp;
-
-                return x.start.CompareTo(y.start);
-            }
         }
     }
 }
