@@ -7,15 +7,16 @@ namespace acmicpc.net.Problems.Greedy
     {
         public static void Main(string[] args)
         {
-            int n = int.Parse(Console.ReadLine());
-            int[] time = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
+            short n = short.Parse(Console.ReadLine());
+            short[] time = Array.ConvertAll(Console.ReadLine().Split(), x => short.Parse(x));
             Array.Sort(time);
 
             int ans = 0;
             int wait = 0;
-            for (int i = 0; i < n; i++)
+            short i = 0;
+            while (i < n)
             {
-                wait += time[i];
+                wait += time[i++];
                 ans += wait;
             }
 
