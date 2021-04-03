@@ -4,31 +4,38 @@ namespace acmicpc.net.Problems.Greedy
 {
     public class P011047
     {
+        private static int ans;
+        private static int n;
+        private static int k;
         public static void Main(string[] args)
         {
             int[] data = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
-            int n = data[0];
-            int k = data[1];
-            int[] coin = new int[n];
-            int max = 0;
-
-            while (n > 0)
-            {
-                coin[--n] = int.Parse(Console.ReadLine());
-                if (coin[n] <= k)
-                    max = n;
-            }
-
-            int ans = 0;
-            n = max;
-            while (k > 0)
-            {
-                int count = k / coin[n];
-                k -= count * coin[n++];
-                ans += count;
-            }
-
+            n = data[0];
+            k = data[1];
+            ans = 0;
+            Do();
             Console.WriteLine(ans);
+        }
+
+        private static void Do()
+        {
+            if (n <= 0)
+                return;
+
+            int c = int.Parse(Console.ReadLine());
+            n--;
+
+            Do();
+
+            if (c > k)
+                return;
+            if (k <= 0)
+                return;
+
+            int count = k / c;
+            k -= count * c;
+            ans += count;
+            return;
         }
     }
 }
