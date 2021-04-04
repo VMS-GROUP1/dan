@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 
 namespace acmicpc.net.Problems.Greedy
@@ -55,7 +56,10 @@ namespace acmicpc.net.Problems.Greedy
                 SpecialRepeat();
             }
 
-            Console.WriteLine(ans);
+            using (var sw = new StreamWriter(new BufferedStream(Console.OpenStandardOutput())))
+            {
+                sw.WriteLine(ans);
+            }
         }
 
         private static void NormalRepeat(string odd, string even, int count, char move)
