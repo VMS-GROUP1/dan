@@ -12,7 +12,7 @@ namespace acmicpc.net.Problems.DD
             short n = short.Parse(Console.ReadLine());
             m = new short[n + 1];
 
-            short a = n % 2 == 0 ? 1 : -1;
+            short a = (short)(n % 2 == 0 ? 1 : -1);
             short b = (short)-a;
             int count = (int)Math.Pow(2, n) - 1;
             StringBuilder sb = new StringBuilder(count * 4);
