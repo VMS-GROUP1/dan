@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace acmicpc.net.Problems.BruteForce
 {
-    //시간초과
     public class P001987
     {
         private static char[][] Board;
         private static HashSet<char> S;
         private static int R;
         private static int C;
+        private static int ANS;
         public static void Main(string[] args)
         {
             int[] p = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
@@ -22,84 +22,39 @@ namespace acmicpc.net.Problems.BruteForce
                 Board[i] = Console.ReadLine().ToCharArray();
             }
 
-            Console.WriteLine(Dfs());
+            S = new HashSet<char>();
+            int count = 1;
+            ANS = 0;
+            S.Add(Board[0][0]);
+            Do(0, 0, count);
+            Console.WriteLine(ANS);
         }
 
-        private static int Dfs()
+        private static void Do(int x, int y, int count)
         {
-            S = new HashSet<char>();
-            Stack<((int r, int c) point, int level)> waiting = new Stack<((int r, int c), int level)>();
-            HashSet<(int, int)> visited = new HashSet<(int, int)>();
-            Stack<(int r, int c)> route = new Stack<(int r, int c)>();
-            int ans = int.MinValue;
-            //string ansRoute = null;
+            ANS = Math.Max(count, ANS);
 
-            waiting.Push(((0, 0), 1));
-
-            while (waiting.TryPop(out var node))
+            for (int i = 0; i < 4; i++)
             {
-                if (visited.Add(node.point) is false)
-                    continue;
+                int xi = x;
+                int yi = y;
 
-                route.Push(node.point);
-                S.Add(Board[node.point.r][node.point.c]);
-                if (node.level > ans)
-                {
-                    ans = node.level;
-                    //ansRoute = string.Concat(route);
-                }
+                if (i == 0) xi++;
+                if (i == 1) xi--;
+                if (i == 2) yi++;
+                if (i == 3) yi--;
 
-                if (Check(node.point, node.level + 1, visited, waiting) is false)
+                if (xi >= 0 && xi < Board.Length && yi >= 0 && yi < Board[0].Length)
                 {
-                    if (waiting.TryPeek(out var next))
+                    var c = Board[xi][yi];
+                    if (S.Contains(c) is false)
                     {
-                        while (route.Count >= next.level)
-                        {
-                            var p = route.Pop();
-                            visited.Remove(p);
-                            S.Remove(Board[p.r][p.c]);
-                        }
+                        S.Add(c);
+                        Do(xi, yi, count + 1);
+                        S.Remove(c);
                     }
                 }
             }
-
-            //Console.WriteLine(ansRoute);
-            return ans;
-        }
-
-        private static bool Check((int r, int c) node, int level, HashSet<(int, int)> visited, Stack<((int r, int c) point, int level)> waiting)
-        {
-            bool check = false;
-
-            (int r, int c) newNode = (node.r + 1, node.c);
-            if (newNode.r < Board.Length && visited.Contains(newNode) is false && S.Contains(Board[newNode.r][newNode.c]) is false)
-            {
-                waiting.Push((newNode, level));
-                check = true;
-            }
-
-            newNode = (node.r - 1, node.c);
-            if (newNode.r >= 0 && visited.Contains(newNode) is false && S.Contains(Board[newNode.r][newNode.c]) is false)
-            {
-                waiting.Push((newNode, level));
-                check = true;
-            }
-
-            newNode = (node.r, node.c + 1);
-            if (newNode.c < Board[0].Length && visited.Contains(newNode) is false && S.Contains(Board[newNode.r][newNode.c]) is false)
-            {
-                waiting.Push((newNode, level));
-                check = true;
-            }
-
-            newNode = (node.r, node.c - 1);
-            if (newNode.c >= 0 && visited.Contains(newNode) is false && S.Contains(Board[newNode.r][newNode.c]) is false)
-            {
-                waiting.Push((newNode, level));
-                check = true;
-            }
-
-            return check;
         }
     }
 }
