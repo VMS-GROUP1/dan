@@ -6,13 +6,12 @@ namespace acmicpc.net.Problems.BruteForce
 {
     public class P001525
     {
-        private static int[] m;
         private static int ans;
         public static void Main(string[] args)
         {
-            m = new int[9];
-            (int, int) nine = (2, 2);
-            ans = 0;
+            int nine = 0;
+            ans = -1;
+            int n = 0;
             for (int i = 0; i < 3; i++)
             {
                 var d = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
@@ -22,58 +21,58 @@ namespace acmicpc.net.Problems.BruteForce
                     int value = d[j];
                     if (value == 0)
                     {
-                        nine = (i, j);
+                        nine = i * 3 + j;
                         value = 9;
                     }
 
-                    m[i * 3 + j] = value;
+                    n = n * 10 + value;
                 }
             }
 
-            Bfs(nine, m);
+            Bfs(nine, n);
             Console.WriteLine(ans);
         }
 
-        private static void Bfs((int r, int c) nine, int[] m)
+        private static void Bfs(int nine, int n)
         {
-            int[] newM = m.ToArray();
-            Queue<((int r, int c) nine, int[] m, int level)> Waiting = new Queue<((int, int), int[], int)>();
-            Waiting.Enqueue((nine, newM, 0));
+            int goal = 123456789;
+            HashSet<int> check = new HashSet<int>();
+            Queue<(int nine, int m, int level)> Waiting = new Queue<(int nine, int m, int level)>();
+            Waiting.Enqueue((nine, n, 0));
 
             while (Waiting.TryDequeue(out var node))
             {
-                if (node.nine.r == 2 && node.nine.c == 2 && Check(node.m))
+                if (node.m == goal)
                 {
                     ans = node.level;
                     break;
                 }
 
+                if (check.Add(node.m) is false)
+                    continue;
+
                 nine = node.nine;
-                m = node.m;
+                int m = node.m;
                 int level = node.level + 1;
 
-                if (nine.r - 1 >= 0)
+                if (nine / 3 > 0)
                 {
-                    newM = m.ToArray();
-                    Swap(newM, nine, (nine.r - 1, nine.c), Waiting, level);
+                    Swap(m, nine, nine - 3, Waiting, level);
                 }
 
-                if (nine.r + 1 <= 2)
+                if (nine / 3 < 2)
                 {
-                    newM = m.ToArray();
-                    Swap(newM, nine, (nine.r + 1, nine.c), Waiting, level);
+                    Swap(m, nine, nine + 3, Waiting, level);
                 }
 
-                if (nine.c - 1 >= 0)
+                if (nine % 3 > 0)
                 {
-                    newM = m.ToArray();
-                    Swap(newM, nine, (nine.r, nine.c - 1), Waiting, level);
+                    Swap(m, nine, nine - 1, Waiting, level);
                 }
 
-                if (nine.c + 1 <= 2)
+                if (nine % 3 < 2)
                 {
-                    newM = m.ToArray();
-                    Swap(newM, nine, (nine.r, nine.c + 1), Waiting, level);
+                    Swap(m, nine, nine + 1, Waiting, level);
                 }
             }
         }
@@ -89,14 +88,16 @@ namespace acmicpc.net.Problems.BruteForce
             return true;
         }
 
-        private static void Swap(int[] m, (int r, int c) x, (int r, int c) y, Queue<((int, int), int[], int)> Waiting, int level)
+        private static void Swap(int m, int x, int y, Queue<(int, int, int)> Waiting, int level)
         {
-            int from = x.r * 3 + x.c;
-            int to = y.r * 3 + y.c;
-
-            var temp = m[to];
-            m[to] = 9;
-            m[from] = temp;
+            int xd = (int)Math.Pow(10, 8 - x);
+            int yd = (int)Math.Pow(10, 8 - y);
+            int from = m / xd % 10;
+            int to = m / yd % 10;
+            m -= xd * from;
+            m -= yd * to;
+            m += xd * to;
+            m += yd * from;
             Waiting.Enqueue((y, m, level));
         }
     }
