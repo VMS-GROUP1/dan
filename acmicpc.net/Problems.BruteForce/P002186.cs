@@ -9,15 +9,19 @@ namespace acmicpc.net.Problems.BruteForce
         private static int ans;
         private static string word;
         private static Dictionary<(char c, int number, int length), int> memo;
+
+        private static int n;
+        private static int m;
+        private static int k;
         public static void Main(string[] args)
         {
             ans = 0;
             memo = new Dictionary<(char c, int number, int length), int>();
             int[] p = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
 
-            int n = p[0];
-            int m = p[1];
-            int k = p[2];
+            n = p[0];
+            m = p[1];
+            k = p[2];
             (char c, int number)[,] d = new (char, int)[n, m];
             int[] count = new int[26];
             Dictionary<(char c, int number), List<(char c, int number, int distance)>> link = new Dictionary<(char, int), List<(char, int, int)>>();
