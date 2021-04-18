@@ -8,23 +8,23 @@ namespace acmicpc.net.Problems.BruteForce
     {
         private static int ans;
         private static string word;
-        private static Dictionary<(char c, int number, int length), int> memo;
-
+        private static int[,,] memo;
+        private static char[,] d;
         private static int n;
         private static int m;
         private static int k;
+        private static List<(int r, int c)>[] point;
         public static void Main(string[] args)
         {
             ans = 0;
-            memo = new Dictionary<(char c, int number, int length), int>();
             int[] p = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
 
             n = p[0];
             m = p[1];
             k = p[2];
-            (char c, int number)[,] d = new (char, int)[n, m];
-            int[] count = new int[26];
-            Dictionary<(char c, int number), List<(char c, int number, int distance)>> link = new Dictionary<(char, int), List<(char, int, int)>>();
+            d = new char[n, m];
+            point = new List<(int, int)>[26];
+            memo = new int[n, m, 80];
 
             for (int i = 0; i < n; i++)
             {
@@ -32,88 +32,56 @@ namespace acmicpc.net.Problems.BruteForce
                 for (int j = 0; j < row.Length; j++)
                 {
                     var c = row[j];
-                    count[c - 'A'] += 1;
-                    d[i, j] = (c, count[c - 'A']);
+                    d[i, j] = c;
+
+                    if (point[c - 'A'] == null)
+                        point[c - 'A'] = new List<(int, int)>();
+
+                    point[c - 'A'].Add((i, j));
+
+                    for (int l = 0; l < 80; l++)
+                    {
+                        memo[i, j, l] = -1;
+                    }
                 }
             }
 
             word = Console.ReadLine();
 
-            for (int i = 0; i < n; i++)
+            foreach (var index in point[word[0] - 'A'])
             {
-                for (int j = 0; j < m; j++)
-                {
-                    var c = d[i, j];
-                    if (link.TryGetValue(c, out var next) is false)
-                    {
-                        next = new List<(char c, int number, int distance)>();
-                        link.Add(c, next);
-                    }
-
-                    for (int l = 0; l < n; l++)
-                    {
-                        if (l == i)
-                            continue;
-
-                        var distance = Math.Abs(i - l);
-                        if (distance > k)
-                            continue;
-                        next.Add((d[l, j].c, d[l, j].number, distance));
-                    }
-
-                    for (int l = 0; l < m; l++)
-                    {
-                        if (l == j)
-                            continue;
-
-                        var distance = Math.Abs(j - l);
-                        if (distance > k)
-                            continue;
-                        next.Add((d[i, l].c, d[i, l].number, distance));
-                    }
-                }
-            }
-
-            for (int i = 1; i <= count[word[0] - 'A']; i++)
-            {
-                var route = new Stack<(char, int)>();
-                var node = (word[0], i);
-                route.Push(node);
-                Dfs(link, route, node);
+                ans += Dfs(index.r, index.c, 1);
             }
 
             Console.WriteLine(ans);
         }
 
-        private static void Dfs(Dictionary<(char c, int number), List<(char c, int number, int distance)>> link, Stack<(char c, int number)> route, (char c, int number) node)
+        private static int Dfs(int r, int c, int length)
         {
-            var key = (node.c, node.number, route.Count);
-            if (memo.TryGetValue(key, out var count) && count > 0)
+            if (memo[r, c, length] != -1)
+                return memo[r, c, length];
+
+            if (length == word.Length)
+                return 1;
+
+            memo[r, c, length] = 0;
+            for (int i = 1; i <= k; i++)
             {
-                ans += count;
-                return;
+                for (int j = 1; j <= 4; j++)
+                {
+                    int rd = (j % 2) * k * ((j - 1) / 2 * 2 - 1) + r;
+                    int cd = ((j - 1) % 2) * k * ((j - 1) / 2 * 2 - 1) + c;
+
+                    if (rd < 0 || cd < 0 || rd >= n || cd >= m)
+                        continue;
+                    if (d[rd, cd] != word[length])
+                        continue;
+
+                    memo[r, c, length] = memo[r, c, length] + Dfs(rd, cd, length + 1);
+                }
             }
 
-            if (route.Count == word.Length)
-            {
-                memo[key] = 1;
-                ans++;
-                return;
-            }
-
-            if (link.TryGetValue(node, out var next) is false)
-                return;
-
-            foreach (var i in next)
-            {
-                if (i.c != word[route.Count])
-                    continue;
-
-                var newNode = (i.c, i.number);
-                route.Push(newNode);
-                Dfs(link, route, newNode);
-                route.Pop();
-            }
+            return memo[r, c, length];
         }
     }
 }
