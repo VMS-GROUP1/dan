@@ -13,7 +13,6 @@ namespace acmicpc.net.Problems.BruteForce
         private static int n;
         private static int m;
         private static int k;
-        private static List<(int r, int c)>[] point;
         public static void Main(string[] args)
         {
             ans = 0;
@@ -23,21 +22,15 @@ namespace acmicpc.net.Problems.BruteForce
             m = p[1];
             k = p[2];
             d = new char[n, m];
-            point = new List<(int, int)>[26];
             memo = new int[n, m, 80];
 
             for (int i = 0; i < n; i++)
             {
                 var row = Console.ReadLine().ToCharArray();
-                for (int j = 0; j < row.Length; j++)
+                for (int j = 0; j < m; j++)
                 {
                     var c = row[j];
                     d[i, j] = c;
-
-                    if (point[c - 'A'] == null)
-                        point[c - 'A'] = new List<(int, int)>();
-
-                    point[c - 'A'].Add((i, j));
 
                     for (int l = 0; l < 80; l++)
                     {
@@ -48,40 +41,46 @@ namespace acmicpc.net.Problems.BruteForce
 
             word = Console.ReadLine();
 
-            foreach (var index in point[word[0] - 'A'])
+            for (int i = 0; i < n; i++)
             {
-                ans += Dfs(index.r, index.c, 1);
+                for (int j = 0; j < m; j++)
+                {
+                    if (d[i, j] != word[0])
+                        continue;
+
+                    ans += Dfs(i, j, 0);
+                }
             }
 
             Console.WriteLine(ans);
         }
 
-        private static int Dfs(int r, int c, int length)
+        private static int Dfs(int r, int c, int index)
         {
-            if (memo[r, c, length] != -1)
-                return memo[r, c, length];
+            if (memo[r, c, index] != -1)
+                return memo[r, c, index];
 
-            if (length == word.Length)
+            if (index == word.Length - 1)
                 return 1;
 
-            memo[r, c, length] = 0;
+            memo[r, c, index] = 0;
             for (int i = 1; i <= k; i++)
             {
                 for (int j = 1; j <= 4; j++)
                 {
-                    int rd = (j % 2) * k * ((j - 1) / 2 * 2 - 1) + r;
-                    int cd = ((j - 1) % 2) * k * ((j - 1) / 2 * 2 - 1) + c;
+                    int rd = (j % 2) * i * ((j - 1) / 2 * 2 - 1) + r;
+                    int cd = ((j - 1) % 2) * i * ((j - 1) / 2 * 2 - 1) + c;
 
                     if (rd < 0 || cd < 0 || rd >= n || cd >= m)
                         continue;
-                    if (d[rd, cd] != word[length])
+                    if (d[rd, cd] != word[index + 1])
                         continue;
 
-                    memo[r, c, length] = memo[r, c, length] + Dfs(rd, cd, length + 1);
+                    memo[r, c, index] += Dfs(rd, cd, index + 1);
                 }
             }
 
-            return memo[r, c, length];
+            return memo[r, c, index];
         }
     }
 }
