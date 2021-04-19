@@ -8,169 +8,108 @@ namespace acmicpc.net.ProblemBruteForce
     {
         private static int N;
         private static int[][,] M;
-        //private static List<(int, int)>[] Link = new List<(int, int)>();
-        private static HashSet<(int, int)> Visited;
-        private static Dictionary<(int, int), HashSet<(int, int)>> Link;
-        private static List<(int x1, int y1, int x2, int y2)> Segment;
-        private static List<List<(int, int)>> my = new List<List<(int, int)>>();
         public static void Main(string[] args)
         {
             N = int.Parse(Console.ReadLine());
             M = new int[N][,];
-            Link = new Dictionary<(int, int), HashSet<(int, int)>>();
-            Segment = new List<(int x1, int y1, int x2, int y2)>();
-            Visited = new HashSet<(int, int)>();
+
+            HashSet<(int, int)> point = new HashSet<(int, int)>();
+            HashSet<Rect> pool = new HashSet<Rect>();
 
             for (int i = 0; i < N; i++)
             {
                 int[] p = Array.ConvertAll(Console.ReadLine().Split(), x => int.Parse(x));
 
-                Add((p[0], p[1]), (p[0], p[3]));
-                Add((p[0], p[3]), (p[2], p[3]));
-                Add((p[2], p[3]), (p[2], p[1]));
-                Add((p[2], p[1]), (p[0], p[1]));
+                Rect r = new Rect(p[0], p[1], p[2], p[3]);
+                pool.Add(r);
 
-                Segment.Add((p[0], p[1], p[0], p[3]));
-                Segment.Add((p[0], p[3], p[2], p[3]));
-                Segment.Add((p[2], p[3], p[2], p[1]));
-                Segment.Add((p[2], p[1], p[0], p[1]));
+                point.Add((p[0], p[1]));
+                point.Add((p[0], p[3]));
+                point.Add((p[2], p[3]));
+                point.Add((p[2], p[1]));
             }
-            Link.TryAdd((0, 0), new HashSet<(int, int)>());
-            Find();
-            int ans = 0;
-            my = new List<List<(int, int)>>();
-            HashSet<(int, int)> check = new HashSet<(int, int)>();
-            foreach (var node in Link.Keys)
-            {
-                if (Visited.Contains(node))
-                    continue;
 
-                if (Dfs(node))
+            int index = 0;
+            Dictionary<int, HashSet<Rect>> check = new Dictionary<int, HashSet<Rect>>();
+            Dictionary<Rect, int> keys = new Dictionary<Rect, int>();
+
+            foreach (var r1 in pool)
+            {
+                if (keys.TryGetValue(r1, out var key) is false)
                 {
-                    foreach (var i in my.Last())
+                    key = index++;
+                    keys.Add(r1, key);
+                }
+
+                if (check.TryGetValue(key, out var group) is false)
+                {
+                    group = new HashSet<Rect>();
+                    check.Add(key, group);
+                }
+
+                group.Add(r1);
+
+                foreach (var r2 in pool)
+                {
+                    if (r1.Equals(r2))
+                        continue;
+
+                    if (r1.IsOverlap(r2) is false)
+                        continue;
+
+                    if (keys.TryGetValue(r2, out var r2Key) && key != r2Key)
                     {
-                        if (check.Add(i) is false)
-                        {
-                            string aa = "";
-                        }
+                        check.TryGetValue(r2Key, out var r2Group);
+                        check.Remove(key);
+                        key = r2Key;
+                        r2Group.UnionWith(group);
+                        foreach (var item in group)
+                            keys[item] = key;
+                        group = r2Group;
+                        continue;
                     }
 
-                    check.UnionWith(my.Last());
-                    ans++;
+                    keys[r2] = key;
+                    group.Add(r2);
                 }
             }
 
-            Console.WriteLine(ans - 1);
+            int ans = check.Keys.Count;
+            ans += point.Contains((0, 0)) ? -1 : 0;
+            Console.WriteLine(ans);
         }
 
-        private static void Add((int x, int y) from, (int x, int y) to)
+        private struct Rect : IEquatable<Rect>
         {
-            if (from == to)
-                return;
-
-            if (Link.TryGetValue(from, out var next) is false)
+            int x1;
+            int y1;
+            int x2;
+            int y2;
+            public Rect(int x1, int y1, int x2, int y2)
             {
-                next = new HashSet<(int, int)>();
-                Link.Add(from, next);
+                this.x1 = x1;
+                this.y1 = y1;
+                this.x2 = x2;
+                this.y2 = y2;
             }
 
-            next.Add(to);
-
-            if (Link.TryGetValue(to, out next) is false)
+            public bool Equals(Rect other)
             {
-                next = new HashSet<(int, int)>();
-                Link.Add(to, next);
+                return this.x1 == other.x1 && this.y1 == other.y1 && this.x2 == other.x2 && this.y2 == other.y2;
             }
 
-            next.Add(from);
-        }
-
-        private static void Find()
-        {
-            int count = Segment.Count;
-            for (int i = 0; i < count; i++)
+            public bool IsOverlap(Rect r2)
             {
-                var s = Segment[i];
-                for (int j = 0; j < count; j++)
-                {
-                    var other = Segment[j];
-                    if (IsIntersect(s.x1, s.y1, s.x2, s.y2, other.x1, other.y1, other.x2, other.y2, out var point) is false)
-                        continue;
+                var r1 = this;
+                if (r1.x1 > r2.x1 && r1.y1 > r2.y1 && r1.x2 < r2.x2 && r1.y2 < r2.y2)
+                    return false;
+                if (r1.x1 < r2.x1 && r1.y1 < r2.y1 && r1.x2 > r2.x2 && r1.y2 > r2.y2)
+                    return false;
+                if (r1.x1 > r2.x2 || r1.y1 > r2.y2 || r2.x1 > r1.x2 || r2.y1 > r1.y2)
+                    return false;
 
-                    Add((s.x1, s.y1), point);
-                    Add((s.x2, s.y2), point);
-                    Add((other.x1, other.y1), point);
-                    Add((other.x2, other.y2), point);
-                }
+                return true;
             }
-        }
-
-        private static bool IsIntersect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, out (int x, int y) point)
-        {
-            point = (0, 0);
-            int b = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-            if (b == 0)
-                return false;
-
-            point = GetIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
-            if (point.x < Math.Min(x1, x2) || point.x > Math.Max(x1, x2))
-                return false;
-
-            if (point.y < Math.Min(y1, y2) || point.y > Math.Max(y1, y2))
-                return false;
-
-            if (point.x < Math.Min(x3, x4) || point.x > Math.Max(x3, x4))
-                return false;
-
-            if (point.y < Math.Min(y3, y4) || point.y > Math.Max(y3, y4))
-                return false;
-
-            return true;
-        }
-
-        private static (int x, int y) GetIntersection(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
-        {
-            int b = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-            int a1 = x1 * y2 - y1 * x2;
-            int a2 = x3 * y4 - y3 * x4;
-            int x = (a1 * (x3 - x4) - (x1 - x2) * a2) / b;
-            int y = (a1 * (y3 - y4) - (y1 - y2) * a2) / b;
-            return (x, y);
-        }
-
-        private static bool Dfs((int x, int y) start)
-        {
-            if (Visited.Contains(start))
-                return false;
-
-            List<(int, int)> newMy = new List<(int, int)>();
-            my.Add(newMy);
-
-            Stack<(int x, int y)> waiting = new Stack<(int x, int y)>();
-            waiting.Push(start);
-
-            while (waiting.TryPop(out var node))
-            {
-                if (Visited.Add(node) is false)
-                    continue;
-
-                newMy.Add(node);
-
-                if (Link.TryGetValue(node, out var neighbors) is false)
-                    continue;
-
-                foreach (var next in neighbors)
-                {
-                    if (Visited.Contains(next))
-                        continue;
-
-                    waiting.Push(next);
-                }
-            }
-
-            newMy.Sort();
-
-            return true;
         }
     }
 }
