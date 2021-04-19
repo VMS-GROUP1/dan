@@ -8,13 +8,15 @@ namespace acmicpc.net.ProblemBruteForce
     {
         private static int N;
         private static int[][,] M;
+        private static HashSet<Rect> Visited;
         public static void Main(string[] args)
         {
             N = int.Parse(Console.ReadLine());
             M = new int[N][,];
+            Visited = new HashSet<Rect>();
 
-            HashSet<(int, int)> point = new HashSet<(int, int)>();
             HashSet<Rect> pool = new HashSet<Rect>();
+            pool.Add(new Rect(0, 0, 0, 0));
 
             for (int i = 0; i < N; i++)
             {
@@ -22,61 +24,46 @@ namespace acmicpc.net.ProblemBruteForce
 
                 Rect r = new Rect(p[0], p[1], p[2], p[3]);
                 pool.Add(r);
-
-                point.Add((p[0], p[1]));
-                point.Add((p[0], p[3]));
-                point.Add((p[2], p[3]));
-                point.Add((p[2], p[1]));
             }
 
-            int index = 0;
             Dictionary<int, HashSet<Rect>> check = new Dictionary<int, HashSet<Rect>>();
             Dictionary<Rect, int> keys = new Dictionary<Rect, int>();
 
+            int ans = 0;
             foreach (var r1 in pool)
             {
-                if (keys.TryGetValue(r1, out var key) is false)
-                {
-                    key = index++;
-                    keys.Add(r1, key);
-                }
+                ans += Bfs(r1, pool);
+            }
 
-                if (check.TryGetValue(key, out var group) is false)
-                {
-                    group = new HashSet<Rect>();
-                    check.Add(key, group);
-                }
+            Console.WriteLine(ans - 1);
+        }
 
-                group.Add(r1);
+        private static int Bfs(Rect start, HashSet<Rect> pool)
+        {
+            Queue<Rect> waiting = new Queue<Rect>();
+            if (Visited.Contains(start))
+                return 0;
 
-                foreach (var r2 in pool)
+            waiting.Enqueue(start);
+            Visited.Add(start);
+
+            while (waiting.TryDequeue(out var node))
+            {
+                foreach (var other in pool)
                 {
-                    if (r1.Equals(r2))
+                    if (Visited.Contains(other))
+                        continue;
+                    if (node.Equals(other))
+                        continue;
+                    if (node.IsOverlap(other) is false)
                         continue;
 
-                    if (r1.IsOverlap(r2) is false)
-                        continue;
-
-                    if (keys.TryGetValue(r2, out var r2Key) && key != r2Key)
-                    {
-                        check.TryGetValue(r2Key, out var r2Group);
-                        check.Remove(key);
-                        key = r2Key;
-                        r2Group.UnionWith(group);
-                        foreach (var item in group)
-                            keys[item] = key;
-                        group = r2Group;
-                        continue;
-                    }
-
-                    keys[r2] = key;
-                    group.Add(r2);
+                    Visited.Add(other);
+                    waiting.Enqueue(other);
                 }
             }
 
-            int ans = check.Keys.Count;
-            ans += point.Contains((0, 0)) ? -1 : 0;
-            Console.WriteLine(ans);
+            return 1;
         }
 
         private struct Rect : IEquatable<Rect>
