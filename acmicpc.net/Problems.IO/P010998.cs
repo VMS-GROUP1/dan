@@ -2,6 +2,7 @@ using System;
 
 namespace acmicpc.net.Problems.IO
 {
+    //A×B
     public class P010998
     {
         public static void Main(string[] args)
